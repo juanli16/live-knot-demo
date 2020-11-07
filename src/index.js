@@ -27,12 +27,9 @@ var vertices = [
 // Add a new node to the chain
 //vertices.push(new THREE.Vector3(0, 1, 5))
 
-const pipeSpline = new THREE.CatmullRomCurve3( vertices )
-
-const path = pipeSpline;
-const geometry = new THREE.TubeGeometry( path, 20, 2, 8, false );
+const path = new THREE.CatmullRomCurve3( vertices );
+const geometry = new THREE.TubeBufferGeometry( path, 20, 2, 8, false );
 const material = new THREE.MeshPhongMaterial( { color: 0xff0000 } );
-//const material = new THREE.MeshBasicMaterial( { color: 0xff0000 } );
 const mesh = new THREE.Mesh( geometry, material );
 scene.add( mesh );
 
@@ -44,6 +41,9 @@ scene.add( directionalLight );
 camera.position.z = 50;
 
 const animate = function () {
+    // need some function here to update the vertices
+    updateGeometry(path);
+
     requestAnimationFrame( animate );
 
     mesh.rotation.x += 0.01;
@@ -51,5 +51,12 @@ const animate = function () {
 
     renderer.render( scene, camera );
 };
+
+function updateGeometry(newPath) {
+    mesh.geometry.dispose()
+    var geometry = new THREE.TubeGeometry( newPath, 20, 2, 8, false)
+    mesh.geometry = geometry
+}
+
 
 animate();
