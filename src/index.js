@@ -41,9 +41,10 @@ function generateVertices(n) {
 var vertices = generateVertices(100);
 
 
-const path = new THREE.CatmullRomCurve3( vertices );
+var path = new THREE.CatmullRomCurve3( vertices );
 const geometry = new THREE.TubeBufferGeometry( path, 20, 2, 8, false );
 const material = new THREE.MeshPhongMaterial( { color: 0xff0000 } );
+material.side = THREE.DoubleSide;
 const mesh = new THREE.Mesh( geometry, material );
 scene.add( mesh );
 
@@ -56,6 +57,8 @@ camera.position.z = 50;
 
 const animate = function () {
     // need some function here to update the vertices
+    vertices.forEach(updateVertex);
+    var path = new THREE.CatmullRomCurve3( vertices );
     updateGeometry(path);
 
     requestAnimationFrame( animate );
@@ -69,11 +72,11 @@ const animate = function () {
     renderer.render( scene, camera );
 };
 
-//function updateVertices(vertices) {
-//    vertices.forEach(item.set(Math.floor((Math.random() * 10) + 1),
-//                              Math.floor((Math.random() * 10) + 1),
-//                              Math.floor((Math.random() * 10) + 1)));
-//};
+function updateVertex(item) {
+    item.set((Math.random() * 10),
+             (Math.random() * 10),
+             (Math.random() * 10));
+};
         
 function updateGeometry(newPath) {
     mesh.geometry.dispose();
