@@ -20,7 +20,7 @@ function init() {
     controls.update();
 
 
-    vertices = generateVertices(100);
+    vertices = generateVertices(10);
 
     let path = new THREE.CatmullRomCurve3( vertices );
 
@@ -38,7 +38,30 @@ function init() {
     camera.position.z = 50;
 }
 
-function updateVertex(item) {
+function updateVertices(method) {
+    if (method == "random") {
+        vertices.forEach(randomVertex);
+    }
+    else if (method == "crankshaft") {
+        // pick two random points
+        let anchor1 = Math.floor((Math.random() * (vertices.length - 2)) - 1); // vertices.length - 2 is to ensure we don't pick the end
+        // anchor2 must fall further from the chain origin
+        let anchor2 = Math.floor((Math.random() * (vertices.length - (anchor1 + 2))) - 1) + (anchor1 + 2);
+
+        let axis = new THREE.Vector3();
+        axis.subVectors(vertices[anchor2], vertices[anchor1]).normalize();
+
+        // How much do we want to rotate by?
+        // let degree = Math.floor(Math.random() * 360) - 180;
+        let degree = Math.PI/2;
+
+        for (let i = (anchor1 + 1); i < (anchor2 - 1); i++) {
+            vertices[i].applyAxisAngle(axis, degree);
+        };
+    };
+};
+
+function randomVertex(item) {
     item.set((Math.random() * 10),
              (Math.random() * 10),
              (Math.random() * 10));
@@ -54,15 +77,15 @@ function generateVertices(n) {
     let list = [ ];
     let i;
     for (i = 0; i < n; i++) {
-        list.push(new THREE.Vector3(i, 0, 0));
+        list.push(new THREE.Vector3(i, i*i, 0));
     };
     return list;
 };
 
 function animate() {
-    vertices.forEach(updateVertex);
-    let path = new THREE.CatmullRomCurve3( vertices );
-    updateGeometry(path);
+    //updateVertices("crankshaft");
+    //let path = new THREE.CatmullRomCurve3( vertices );
+    //updateGeometry(path);
 
     requestAnimationFrame( animate );
 
@@ -74,3 +97,13 @@ function animate() {
 
     renderer.render( scene, camera );
 };
+
+document.addEventListener('keydown', (event) => {
+  const keyName = event.key;
+
+  if (keyName === 'Control') {
+      updateVertices("crankshaft");
+      let path = new THREE.CatmullRomCurve3( vertices );
+      updateGeometry(path);
+  };
+}, false);
