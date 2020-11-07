@@ -22,7 +22,7 @@ function init() {
 
     vertices = generateVertices(100);
 
-    var path = new THREE.CatmullRomCurve3( vertices );
+    let path = new THREE.CatmullRomCurve3( vertices );
 
     geometry = new THREE.TubeBufferGeometry( path, 20, 2, 8, false );
     material = new THREE.MeshPhongMaterial( { color: 0xff0000 } );
@@ -46,13 +46,13 @@ function updateVertex(item) {
 
 function updateGeometry(newPath) {
     mesh.geometry.dispose();
-    var geometry = new THREE.TubeGeometry( newPath, 20, 2, 8, false);
+    let geometry = new THREE.TubeGeometry( newPath, 20, 2, 8, false);
     mesh.geometry = geometry;
 };
 
 function generateVertices(n) {
-    var list = [ ];
-    var i;
+    let list = [ ];
+    let i;
     for (i = 0; i < n; i++) {
         list.push(new THREE.Vector3(i, 0, 0));
     };
@@ -60,9 +60,8 @@ function generateVertices(n) {
 };
 
 function animate() {
-    // need some function here to update the vertices
     vertices.forEach(updateVertex);
-    var path = new THREE.CatmullRomCurve3( vertices );
+    let path = new THREE.CatmullRomCurve3( vertices );
     updateGeometry(path);
 
     requestAnimationFrame( animate );
