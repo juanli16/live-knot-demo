@@ -1,11 +1,16 @@
 import * as THREE from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
+
+const controls = new OrbitControls( camera, renderer.domElement );
+//controls.update() must be called after any manual changes to the camera's transform
+camera.position.set( 0, 20, 100 );
+controls.update();
 
 //var vertices = [
 //    new THREE.Vector3( 0, 10, - 10 ), new THREE.Vector3( 10, 0, - 10 ),
@@ -55,8 +60,11 @@ const animate = function () {
 
     requestAnimationFrame( animate );
 
-    mesh.rotation.x += 0.01;
-    mesh.rotation.y += 0.01;
+    //mesh.rotation.x += 0.01;
+    //mesh.rotation.y += 0.01;
+
+    // required if controls.enableDamping or controls.autoRotate are set to true
+    controls.update();
 
     renderer.render( scene, camera );
 };
