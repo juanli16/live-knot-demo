@@ -20,7 +20,7 @@ function init() {
     controls.update();
 
 
-    vertices = generateVertices(10);
+    vertices = generateVertices(20);
 
     let path = new THREE.CatmullRomCurve3( vertices );
 
@@ -94,7 +94,7 @@ function generateVertices(n) {
     let list = [ ];
     let i;
     for (i = 0; i < n; i++) {
-        list.push(new THREE.Vector3(i, i*2, 0));
+        list.push(new THREE.Vector3(i, i*i, 0));
     };
     return list;
 };
