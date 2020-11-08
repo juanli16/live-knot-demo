@@ -3,6 +3,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 let scene, camera, renderer, controls;
 let geometry, material, mesh, vertices;
+let radius = 1
 
 init();
 animate();
@@ -20,12 +21,13 @@ function init() {
     controls.update();
 
 
-    vertices = generateVertices(20);
+    vertices = generateVertices(200);
 
     let path = new THREE.CatmullRomCurve3( vertices );
 
-    geometry = new THREE.TubeBufferGeometry( path, 20, 2, 8, false );
-    material = new THREE.MeshPhongMaterial( { color: 0xff0000 } );
+    geometry = new THREE.TubeBufferGeometry( path, 20, radius, 8, false );
+    //material = new THREE.MeshPhongMaterial( { color: 0xff0000 } );
+    material = new THREE.MeshLambertMaterial( { color: 0xff0000 } );
     material.side = THREE.DoubleSide;
     mesh = new THREE.Mesh( geometry, material );
     scene.add( mesh );
@@ -45,7 +47,7 @@ function updateVertices(method) {
         // pick two random points
         let anchor1, anchor2, endVector;
 
-        anchor1 = Math.floor((Math.random() * (vertices.length - 2)) - 1); // vertices.length - 2 is to ensure we don't pick the end
+        anchor1 = Math.floor((Math.random() * (vertices.length - 3))); // vertices.length - 2 is to ensure we don't pick the end
 
         // if anchor1 is towards the last half of the string, freely move the last half of the string
         if ( anchor1 / vertices.length > 0.5 ) {
@@ -62,6 +64,7 @@ function updateVertices(method) {
 
         let axis = new THREE.Vector3();
         axis.subVectors(endVector, vertices[anchor1]).normalize();
+        // let quaternion = new THREE.Quaternion();
 
         // How much do we want to rotate by?
         // let degree = Math.floor(Math.random() * 360) - 180;
@@ -69,11 +72,15 @@ function updateVertices(method) {
 
         for (let i = (anchor1 + 1); i < anchor2; i++) {
             for (let theta = (degree / 10); theta <= degree; theta = (theta + (degree / 10))) {
-                if (checkCollision(vertices[i], (3 * geometry.parameters.radius), anchor1, anchor2)) {
+                if (checkCollision(vertices[i], (4 * geometry.parameters.radius), anchor1, anchor2)) {
                     console.log("collision");
                     break;
                 } else {
+                    //quaternion.setFromAxisAngle( axis, theta);
+                    vertices[i].sub( vertices[anchor1] );
+                    //vertices[i].applyQuaternion( quaternion );
                     vertices[i].applyAxisAngle(axis, theta);
+                    vertices[i].add( vertices[anchor1] );
                 };
             };
             //vertices[i].applyAxisAngle(axis, degree);
@@ -100,7 +107,7 @@ function checkCollision(vertex, radius, anchor1, anchor2) {
 
 function updateGeometry(newPath) {
     mesh.geometry.dispose();
-    let geometry = new THREE.TubeGeometry( newPath, 20, 2, 8, false);
+    let geometry = new THREE.TubeGeometry( newPath, 20, radius, 8, false);
     mesh.geometry = geometry;
 };
 
@@ -115,7 +122,7 @@ function generateVertices(n) {
 
 function tieTheKnot(start, end) {
     let line = new THREE.LineCurve3(start, end);
-    let geometry2 = new THREE.TubeBufferGeometry( line, 20, 2, 8, false );
+    let geometry2 = new THREE.TubeBufferGeometry( line, 20, radius, 8, false );
     let material2 = new THREE.MeshBasicMaterial( { color: 0x0000ff } );
     material2.side = THREE.DoubleSide;
     let mesh2 = new THREE.Mesh( geometry2, material2 );
