@@ -22,7 +22,6 @@ function init() {
     camera.position.set( 0, 20, 100 );
     controls.update();
 
-
     vertices = generateVertices(200);
 
     let path = new THREE.CatmullRomCurve3( vertices );
@@ -33,6 +32,12 @@ function init() {
     //material.side = THREE.DoubleSide;
     mesh = new THREE.Mesh( geometry, material );
     scene.add( mesh );
+
+    const cubeGeometry = new THREE.BoxBufferGeometry( 5, 5, 5 );
+    cubeGeometry.translate( -100.0, 0.0, 0.0);
+    const cubeMaterial = new THREE.MeshPhongMaterial( {color: 0xff0000} );
+    const cube = new THREE.Mesh( cubeGeometry, cubeMaterial );
+    scene.add( cube );
 
     const light = new THREE.AmbientLight( 0x404040 ); // soft white light
     scene.add( light );
@@ -201,7 +206,6 @@ document.addEventListener('keydown', (event) => {
       tieTheKnot(vertices[0], vertices[vertices.length - 1]);
   } else if (keyName === 'e') {
       displayPath();
-      console.log(tailPath);
   } else if (keyName === 'a') {
       let v = new THREE.Vector3(1, 1, 0);
       let axis = new THREE.Vector3(0, 1, 0);
