@@ -1,9 +1,13 @@
 from flask import Flask
 from flask_restful import Resource, Api, reqparse
+from flask_cors import CORS, cross_origin
 import numpy as np
 
 app = Flask(__name__)
 api = Api(app)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
+
 
 parser = reqparse.RequestParser()
 parser.add_argument('knot')
@@ -18,7 +22,7 @@ class Knot(Resource):
         knot_vertices = args['knot']
         knot_vertices = np.array(knot_vertices)
         print(knot_vertices)
-        return 201
+        return args['knot']
 
 
 api.add_resource(HelloWorld, '/')
