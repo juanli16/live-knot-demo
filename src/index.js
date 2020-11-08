@@ -6,6 +6,21 @@ let geometry, material, mesh, vertices;
 let radius = 1;
 let camToSave = {};
 
+function reqListener () {
+  console.log(this.responseText);
+}
+
+let xhr = new XMLHttpRequest();
+xhr.addEventListener("load", reqListener);
+xhr.open("POST", "127.0.0.1:5000/knot/", true);
+xhr.setRequestHeader('Content-Type', 'application/json');
+xhr.onload = function() {
+  console.log("HELLO")
+  console.log(this.responseText);
+  var data = JSON.parse(this.responseText);
+  console.log(data);
+}
+
 init();
 animate();
 
@@ -194,5 +209,8 @@ document.addEventListener('keydown', (event) => {
       restoreCamera(camToSave.position, camToSave.rotation, camToSave.controlCenter);
   } else if (keyName === 'l') {
       console.log(checkLength());
+  } else if (keyName === 'k') {
+      console.log("sending post request");
+      xhr.send(JSON.stringify({knot: [[1, 2, 3], [2, 3, 4]]}));
   };
 }, false);
