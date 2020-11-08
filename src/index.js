@@ -21,14 +21,13 @@ function init() {
     controls.update();
 
 
-    vertices = generateVertices(200);
+    vertices = generateVertices(2000);
 
     let path = new THREE.CatmullRomCurve3( vertices );
 
     geometry = new THREE.TubeBufferGeometry( path, 20, radius, 8, false );
-    //material = new THREE.MeshPhongMaterial( { color: 0xff0000 } );
-    material = new THREE.MeshLambertMaterial( { color: 0xff0000 } );
-    material.side = THREE.DoubleSide;
+    material = new THREE.MeshPhongMaterial( { color: 0xffff00 } );
+    //material.side = THREE.DoubleSide;
     mesh = new THREE.Mesh( geometry, material );
     scene.add( mesh );
 
@@ -64,21 +63,18 @@ function updateVertices(method) {
 
         let axis = new THREE.Vector3();
         axis.subVectors(endVector, vertices[anchor1]).normalize();
-        // let quaternion = new THREE.Quaternion();
 
         // How much do we want to rotate by?
-        // let degree = Math.floor(Math.random() * 360) - 180;
-        let degree = Math.PI/2;
+        let degree = Math.floor(Math.random() * (2 * Math.PI)) - Math.PI;
+        //let degree = Math.PI/2;
 
         for (let i = (anchor1 + 1); i < anchor2; i++) {
             for (let theta = (degree / 10); theta <= degree; theta = (theta + (degree / 10))) {
-                if (checkCollision(vertices[i], (4 * geometry.parameters.radius), anchor1, anchor2)) {
+                if (checkCollision(vertices[i], (4 * radius), anchor1, anchor2)) {
                     console.log("collision");
                     break;
                 } else {
-                    //quaternion.setFromAxisAngle( axis, theta);
                     vertices[i].sub( vertices[anchor1] );
-                    //vertices[i].applyQuaternion( quaternion );
                     vertices[i].applyAxisAngle(axis, theta);
                     vertices[i].add( vertices[anchor1] );
                 };
@@ -115,7 +111,7 @@ function generateVertices(n) {
     let list = [ ];
     let i;
     for (i = 0; i < n; i++) {
-        list.push(new THREE.Vector3(i, 0, 0));
+        list.push(new THREE.Vector3(i/10, 0, 0));
     };
     return list;
 };
@@ -123,7 +119,7 @@ function generateVertices(n) {
 function tieTheKnot(start, end) {
     let line = new THREE.LineCurve3(start, end);
     let geometry2 = new THREE.TubeBufferGeometry( line, 20, radius, 8, false );
-    let material2 = new THREE.MeshBasicMaterial( { color: 0x0000ff } );
+    let material2 = new THREE.MeshPhongMaterial( { color: 0x0000ff } );
     material2.side = THREE.DoubleSide;
     let mesh2 = new THREE.Mesh( geometry2, material2 );
     mesh2.name = "tie";
