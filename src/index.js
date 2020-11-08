@@ -5,6 +5,7 @@ let scene, camera, renderer, controls;
 let geometry, material, mesh, vertices;
 let radius = 1;
 let camToSave = {};
+let tailPath = [];
 
 init();
 animate();
@@ -25,6 +26,7 @@ function init() {
     vertices = generateVertices(200);
 
     let path = new THREE.CatmullRomCurve3( vertices );
+    tailPath.push(vertices[vertices.length - 1].clone());
 
     geometry = new THREE.TubeBufferGeometry( path, 20, radius, 8, false );
     material = new THREE.MeshPhongMaterial( { color: 0xffff00 } );
@@ -77,6 +79,7 @@ function updateVertices(method) {
             for (let theta = (degree / 10); theta <= degree; theta = (theta + (degree / 10))) {
                 if (checkCollision(vertices[i], (4 * radius), anchor1, anchor2)) {
                     console.log("collision");
+                    
                     break;
                 } else {
                     vertices[i].sub( vertices[anchor1] );
@@ -134,6 +137,16 @@ function tieTheKnot(start, end) {
     scene.add( mesh2 );
 };
 
+function displayPath() {
+    let path = new THREE.CatmullRomCurve3( tailPath );
+    let tailGeometry = new THREE.TubeBufferGeometry( path, 20, radius, 8, false );
+    let tailMaterial = new THREE.MeshPhongMaterial( { color: 0xffffff } );
+    //material.side = THREE.DoubleSide;
+    let tailMesh = new THREE.Mesh( tailGeometry, tailMaterial );
+    tailMesh.name = "tail";
+    scene.add( tailMesh );
+};
+
 function restoreCamera(position, rotation, controlCenter){
     camera.position.set(position.x, position.y, position.z);
     camera.rotation.set(rotation.x, rotation.y, rotation.z);
@@ -172,18 +185,23 @@ function animate() {
 document.addEventListener('keydown', (event) => {
   const keyName = event.key;
 
-  let tie;
+    let tie;
+    let tail;
 
   if (keyName === 'r') {
       updateVertices("crankshaft");
       let path = new THREE.CatmullRomCurve3( vertices );
       updateGeometry(path);
       tie = scene.getObjectByName("tie");
-      //mesh2.clear();
       scene.remove( tie );
-
+      tailPath.push(vertices[vertices.length - 1].clone());
+      tail = scene.getObjectByName("tail");
+      scene.remove( tail );
   } else if (keyName === 't') {
       tieTheKnot(vertices[0], vertices[vertices.length - 1]);
+  } else if (keyName === 'e') {
+      displayPath();
+      console.log(tailPath);
   } else if (keyName === 'a') {
       let v = new THREE.Vector3(1, 1, 0);
       let axis = new THREE.Vector3(0, 1, 0);
