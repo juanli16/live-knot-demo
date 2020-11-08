@@ -41,8 +41,7 @@ function init() {
 function updateVertices(method) {
     if (method == "random") {
         vertices.forEach(randomVertex);
-    }
-    else if (method == "crankshaft") {
+    } else if (method == "crankshaft") {
         // pick two random points
         let anchor1 = Math.floor((Math.random() * (vertices.length - 2)) - 1); // vertices.length - 2 is to ensure we don't pick the end
         // anchor2 must fall further from the chain origin
@@ -56,7 +55,14 @@ function updateVertices(method) {
         let degree = Math.PI/2;
 
         for (let i = (anchor1 + 1); i < (anchor2 - 1); i++) {
-            vertices[i].applyAxisAngle(axis, degree);
+            for (let theta = (degree / 10); theta <= degree; theta = (theta + (degree / 10))) {
+                if (checkCollision(vertices[i], geometry.parameters.radius, anchor1, anchor2)) {
+                    break;
+                } else {
+                    vertices[i].applyAxisAngle(axis, theta);
+                };
+            };
+            //vertices[i].applyAxisAngle(axis, degree);
         };
     };
 };
@@ -65,6 +71,17 @@ function randomVertex(item) {
     item.set((Math.random() * 10),
              (Math.random() * 10),
              (Math.random() * 10));
+};
+
+function checkCollision(vertex, radius, anchor1, anchor2) {
+    for (let i = 0; i < vertices.length; i++) {
+        if ((i <= anchor1) || (i >= anchor2)) {
+            if (vertex.distanceToSquared(vertices[i]) <= radius*radius) {
+                return true;
+            };
+        };
+    };
+    return false;
 };
 
 function updateGeometry(newPath) {
