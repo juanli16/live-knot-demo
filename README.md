@@ -4,12 +4,15 @@ A js rendered knot forming experiment
 ## What is a knot
 A mathematical knot is an embedding of the circle into three-dimensional Euclidean space. Some common knots are
 * unknot
+  
   <img src="https://upload.wikimedia.org/wikipedia/commons/3/37/Blue_Unknot.png" alt="unknot" width="200">
 
 * trefoil
+  
   <img src="https://upload.wikimedia.org/wikipedia/commons/a/ac/Blue_Trefoil_Knot_Animated.gif" alt="trefoil" width="200">
 
 * Figure eight knot
+  
   <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Blue_Figure-Eight_Knot.png/1280px-Blue_Figure-Eight_Knot.png" alt="figure8" width="200">
 
 ## Why is it interesting?
