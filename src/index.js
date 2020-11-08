@@ -5,7 +5,7 @@ let scene, camera, renderer, controls;
 let geometry, material, mesh, vertices;
 let radius = 1;
 let camToSave = {};
-let tailPath = [];
+//let tailPath = [];
 
 function reqListener () {
   console.log(this.responseText);
@@ -40,7 +40,7 @@ function init() {
     vertices = generateVertices(200);
 
     let path = new THREE.CatmullRomCurve3( vertices );
-    tailPath.push(vertices[vertices.length - 1].clone());
+    //tailPath.push(vertices[vertices.length - 1].clone());
 
     geometry = new THREE.TubeBufferGeometry( path, 20, radius, 8, false );
     material = new THREE.MeshPhongMaterial( { color: 0xffff00 } );
@@ -76,13 +76,13 @@ function updateVertices(method) {
         anchor1 = Math.floor((Math.random() * (vertices.length - 3))); // vertices.length - 2 is to ensure we don't pick the end
 
         // if anchor1 is towards the last half of the string, freely move the last half of the string
-        if ( anchor1 / vertices.length > 0.8 ) {
+        if ( anchor1 / vertices.length > 0.7 ) {
             endVector = new THREE.Vector3();
             endVector.setX( vertices[anchor1].x + Math.random() * 10 - 5 );
             endVector.setY( vertices[anchor1].y + Math.random() * 10 - 5 );
             endVector.setY( vertices[anchor1].z + Math.random() * 10 - 5 );
             anchor2 = vertices.length;
-            tailPath.push(vertices[vertices.length - 1].clone());
+            //tailPath.push(vertices[vertices.length - 1].clone());
         } else {
             // anchor2 must fall further from the chain origin
             anchor2 = Math.floor((Math.random() * (vertices.length - (anchor1 + 2))) - 1) + (anchor1 + 2);
@@ -219,9 +219,9 @@ document.addEventListener('keydown', (event) => {
       scene.remove( tail );
   } else if (keyName === 't') {
       tieTheKnot(vertices[0], vertices[vertices.length - 1]);
-  } else if (keyName === 'e') {
-      displayPath();
-      console.log(tailPath);
+  //} else if (keyName === 'e') {
+  //    displayPath();
+  //    console.log(tailPath);
   } else if (keyName === 'a') {
       let v = new THREE.Vector3(1, 1, 0);
       let axis = new THREE.Vector3(0, 1, 0);
