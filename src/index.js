@@ -67,6 +67,7 @@ function updateVertices(method) {
             endVector.setY( vertices[anchor1].y + Math.random() * 10 - 5 );
             endVector.setY( vertices[anchor1].z + Math.random() * 10 - 5 );
             anchor2 = vertices.length;
+            tailPath.push(vertices[vertices.length - 1].clone());
         } else {
             // anchor2 must fall further from the chain origin
             anchor2 = Math.floor((Math.random() * (vertices.length - (anchor1 + 2))) - 1) + (anchor1 + 2);
@@ -143,10 +144,10 @@ function tieTheKnot(start, end) {
 };
 
 function displayPath() {
-    let path = new THREE.CatmullRomCurve3( tailPath );
-    let tailGeometry = new THREE.TubeBufferGeometry( path, 20, radius, 8, false );
-    let tailMaterial = new THREE.MeshPhongMaterial( { color: 0xffffff } );
-    //material.side = THREE.DoubleSide;
+    let pathT = new THREE.CatmullRomCurve3( tailPath );
+    let tailGeometry = new THREE.TubeBufferGeometry( pathT, 20, radius, 8, false );
+    let tailMaterial = new THREE.MeshPhongMaterial( { color: 0xff0000 } );
+    tailMaterial.side = THREE.DoubleSide;
     let tailMesh = new THREE.Mesh( tailGeometry, tailMaterial );
     tailMesh.name = "tail";
     scene.add( tailMesh );
@@ -199,13 +200,13 @@ document.addEventListener('keydown', (event) => {
       updateGeometry(path);
       tie = scene.getObjectByName("tie");
       scene.remove( tie );
-      tailPath.push(vertices[vertices.length - 1].clone());
       tail = scene.getObjectByName("tail");
       scene.remove( tail );
   } else if (keyName === 't') {
       tieTheKnot(vertices[0], vertices[vertices.length - 1]);
   } else if (keyName === 'e') {
       displayPath();
+      console.log(tailPath);
   } else if (keyName === 'a') {
       let v = new THREE.Vector3(1, 1, 0);
       let axis = new THREE.Vector3(0, 1, 0);
