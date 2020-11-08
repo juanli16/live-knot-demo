@@ -54,7 +54,7 @@ function updateVertices(method) {
         anchor1 = Math.floor((Math.random() * (vertices.length - 3))); // vertices.length - 2 is to ensure we don't pick the end
 
         // if anchor1 is towards the last half of the string, freely move the last half of the string
-        if ( anchor1 / vertices.length > 0.5 ) {
+        if ( anchor1 / vertices.length > 0.8 ) {
             endVector = new THREE.Vector3();
             endVector.setX( vertices[anchor1].x + Math.random() * 10 - 5 );
             endVector.setY( vertices[anchor1].y + Math.random() * 10 - 5 );
@@ -82,6 +82,9 @@ function updateVertices(method) {
                     vertices[i].sub( vertices[anchor1] );
                     vertices[i].applyAxisAngle(axis, theta);
                     vertices[i].add( vertices[anchor1] );
+                    vertices[i].multiplyScalar(100);
+                    vertices[i].floor();
+                    vertices[i].multiplyScalar(0.01);
                 };
             };
             //vertices[i].applyAxisAngle(axis, degree);
@@ -141,6 +144,15 @@ function restoreCamera(position, rotation, controlCenter){
     renderer.render( scene, camera );
 }
 
+function checkLength() {
+    let dist = 0;
+    for (let i = 0; i < (vertices.length - 1); i++) {
+        dist = dist + vertices[i].distanceTo(vertices[i+1]);
+    };
+    return dist;
+};
+
+
 function animate() {
     //updateVertices("crankshaft");
     //let path = new THREE.CatmullRomCurve3( vertices );
@@ -179,6 +191,8 @@ document.addEventListener('keydown', (event) => {
       v.applyAxisAngle(axis, angle);
       console.log(v);
   } else if (keyName === 'c') {
-    restoreCamera(camToSave.position, camToSave.rotation, camToSave.controlCenter);
+      restoreCamera(camToSave.position, camToSave.rotation, camToSave.controlCenter);
+  } else if (keyName === 'l') {
+      console.log(checkLength());
   };
 }, false);
