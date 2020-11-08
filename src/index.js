@@ -56,7 +56,7 @@ function updateVertices(method) {
 
         for (let i = (anchor1 + 1); i < (anchor2 - 1); i++) {
             for (let theta = (degree / 10); theta <= degree; theta = (theta + (degree / 10))) {
-                if (checkCollision(vertices[i], geometry.parameters.radius, anchor1, anchor2)) {
+                if (checkCollision(vertices[i], (3 * geometry.parameters.radius), anchor1, anchor2)) {
                     break;
                 } else {
                     vertices[i].applyAxisAngle(axis, theta);
@@ -94,7 +94,7 @@ function generateVertices(n) {
     let list = [ ];
     let i;
     for (i = 0; i < n; i++) {
-        list.push(new THREE.Vector3(i, i*i, 0));
+        list.push(new THREE.Vector3(i, i*2, 0));
     };
     return list;
 };
