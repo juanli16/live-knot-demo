@@ -35,3 +35,10 @@ A mathematical knot is an embedding of the circle into three-dimensional Euclide
   npm start
   ```
 * Now visit the website at [http://localhost:8080](http://localhost:8080)
+
+## Interface
+* Here is how it looks like initially with the keybind listed on top of the page
+![interface](img/interface.png)
+
+* Here is a knot
+![knot](img/knot.png)
