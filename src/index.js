@@ -3,7 +3,8 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 let scene, camera, renderer, controls;
 let geometry, material, mesh, vertices;
-let radius = 1
+let radius = 1;
+let camToSave = {};
 
 init();
 animate();
@@ -37,6 +38,10 @@ function init() {
     scene.add( directionalLight );
 
     camera.position.z = 50;
+
+    camToSave.position = camera.position.clone();
+    camToSave.rotation = camera.rotation.clone();
+    camToSave.controlCenter = controls.target.clone();
 }
 
 function updateVertices(method) {
@@ -126,6 +131,16 @@ function tieTheKnot(start, end) {
     scene.add( mesh2 );
 };
 
+function restoreCamera(position, rotation, controlCenter){
+    camera.position.set(position.x, position.y, position.z);
+    camera.rotation.set(rotation.x, rotation.y, rotation.z);
+
+    controls.target.set(controlCenter.x, controlCenter.y, controlCenter.z);
+    controls.update();
+
+    renderer.render( scene, camera );
+}
+
 function animate() {
     //updateVertices("crankshaft");
     //let path = new THREE.CatmullRomCurve3( vertices );
@@ -163,5 +178,7 @@ document.addEventListener('keydown', (event) => {
       let angle = Math.PI /2;
       v.applyAxisAngle(axis, angle);
       console.log(v);
+  } else if (keyName === 'c') {
+    restoreCamera(camToSave.position, camToSave.rotation, camToSave.controlCenter);
   };
 }, false);
