@@ -43,20 +43,34 @@ function updateVertices(method) {
         vertices.forEach(randomVertex);
     } else if (method == "crankshaft") {
         // pick two random points
-        let anchor1 = Math.floor((Math.random() * (vertices.length - 2)) - 1); // vertices.length - 2 is to ensure we don't pick the end
-        // anchor2 must fall further from the chain origin
-        let anchor2 = Math.floor((Math.random() * (vertices.length - (anchor1 + 2))) - 1) + (anchor1 + 2);
+        let anchor1, anchor2, endVector;
+
+        anchor1 = Math.floor((Math.random() * (vertices.length - 2)) - 1); // vertices.length - 2 is to ensure we don't pick the end
+
+        // if anchor1 is towards the last half of the string, freely move the last half of the string
+        if ( anchor1 / vertices.length > 0.5 ) {
+            endVector = new THREE.Vector3();
+            endVector.setX( vertices[anchor1].x + Math.random() * 10 - 5 );
+            endVector.setY( vertices[anchor1].y + Math.random() * 10 - 5 );
+            endVector.setY( vertices[anchor1].z + Math.random() * 10 - 5 );
+            anchor2 = vertices.length;
+        } else {
+            // anchor2 must fall further from the chain origin
+            anchor2 = Math.floor((Math.random() * (vertices.length - (anchor1 + 2))) - 1) + (anchor1 + 2);
+            endVector = vertices[anchor2];
+        };
 
         let axis = new THREE.Vector3();
-        axis.subVectors(vertices[anchor2], vertices[anchor1]).normalize();
+        axis.subVectors(endVector, vertices[anchor1]).normalize();
 
         // How much do we want to rotate by?
         // let degree = Math.floor(Math.random() * 360) - 180;
         let degree = Math.PI/2;
 
-        for (let i = (anchor1 + 1); i < (anchor2 - 1); i++) {
+        for (let i = (anchor1 + 1); i < anchor2; i++) {
             for (let theta = (degree / 10); theta <= degree; theta = (theta + (degree / 10))) {
                 if (checkCollision(vertices[i], (3 * geometry.parameters.radius), anchor1, anchor2)) {
+                    console.log("collision");
                     break;
                 } else {
                     vertices[i].applyAxisAngle(axis, theta);
@@ -94,9 +108,19 @@ function generateVertices(n) {
     let list = [ ];
     let i;
     for (i = 0; i < n; i++) {
-        list.push(new THREE.Vector3(i, i*i, 0));
+        list.push(new THREE.Vector3(i, 0, 0));
     };
     return list;
+};
+
+function tieTheKnot(start, end) {
+    let line = new THREE.LineCurve3(start, end);
+    let geometry2 = new THREE.TubeBufferGeometry( line, 20, 2, 8, false );
+    let material2 = new THREE.MeshBasicMaterial( { color: 0x0000ff } );
+    material2.side = THREE.DoubleSide;
+    let mesh2 = new THREE.Mesh( geometry2, material2 );
+    mesh2.name = "tie";
+    scene.add( mesh2 );
 };
 
 function animate() {
@@ -118,9 +142,23 @@ function animate() {
 document.addEventListener('keydown', (event) => {
   const keyName = event.key;
 
-  if (keyName === 'Control') {
+  let tie;
+
+  if (keyName === 'r') {
       updateVertices("crankshaft");
       let path = new THREE.CatmullRomCurve3( vertices );
       updateGeometry(path);
+      tie = scene.getObjectByName("tie");
+      //mesh2.clear();
+      scene.remove( tie );
+
+  } else if (keyName === 't') {
+      tieTheKnot(vertices[0], vertices[vertices.length - 1]);
+  } else if (keyName === 'a') {
+      let v = new THREE.Vector3(1, 1, 0);
+      let axis = new THREE.Vector3(0, 1, 0);
+      let angle = Math.PI /2;
+      v.applyAxisAngle(axis, angle);
+      console.log(v);
   };
 }, false);
